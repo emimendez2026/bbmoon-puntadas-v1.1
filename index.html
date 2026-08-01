@@ -861,7 +861,8 @@ function renderPresupuestoEditor(){
       // 2. Datos del trabajo
       '<div class="section-title">2 · Trabajo</div>'+
       '<div class="card">'+
-        field('Título del presupuesto','titulo',d.titulo,'text','Ej: Confección de 3 batas azules')+
+        '<div class="field"><label>Título del presupuesto</label>'+
+          '<input id="f-titulo" class="input" type="text" value="'+esc(d.titulo||'')+'" placeholder="Ej: Confección de 3 batas azules" oninput="STATE.draft.titulo=this.value"></div>'+
         '<div class="field"><label>Descripción del trabajo</label>'+
           '<textarea id="f-descripcion" class="textarea" placeholder="Detalle general del trabajo a realizar" oninput="STATE.draft.descripcion=this.value">'+esc(d.descripcion)+'</textarea></div>'+
         '<div class="row2">'+
@@ -1053,8 +1054,14 @@ function buildPayload(){
 }
 function guardarPresupuesto(silent){
   var d=STATE.draft;
+  // Respaldo: si por algún motivo el título no quedó registrado mientras se
+  // escribía, lo tomamos directamente del campo antes de validar.
+  var elTit = document.getElementById('f-titulo');
+  if(elTit && elTit.value && !d.titulo) d.titulo = elTit.value;
+  if(d.titulo) d.titulo = String(d.titulo).trim();
+
   if(!d.id_cliente){ toast('Elegí un cliente','err'); return Promise.reject(); }
-  if(!d.titulo){ toast('Poné un título','err'); return Promise.reject(); }
+  if(!d.titulo){ toast('Poné un título','err'); if(elTit) elTit.focus(); return Promise.reject(); }
   if(!d.items.length){ toast('Agregá al menos un material','err'); return Promise.reject(); }
   if(!silent) showSaving('Guardando presupuesto…');
   return api('savePresupuesto', buildPayload()).then(function(res){
