@@ -75,3 +75,24 @@ Por orden de utilidad real para el taller:
 3. **PIN de acceso**, para que el link público no quede abierto a cualquiera que lo tenga.
 4. **Recordatorios** de presupuestos por vencer y entregas próximas.
 5. **Backup automático** de la planilla a PDF/Excel una vez por mes.
+
+---
+
+## Agregado en v1.2
+
+### Acceso directo a la planilla desde la app
+Ahora la app sabe dónde está su planilla de Google y permite abrirla sin buscarla:
+
+- **Inicio** → nuevo acceso rápido **📗 Ver planilla**.
+- **Configuración** → sección *"Tu planilla de Google"* con dos botones:
+  - **Abrir la planilla completa**
+  - **Ir a una hoja en particular** — lista las 10 hojas con nombres claros (Insumos / Stock, Clientes, Presupuestos…) y abre directamente la que se toque.
+
+Detalles técnicos:
+- La dirección **no se guarda** en ninguna parte: el backend la calcula en el momento con `SpreadsheetApp.getActiveSpreadsheet().getUrl()`. Si mañana se cambia de planilla, el acceso sigue apuntando a la correcta sola.
+- `saveConfig` ignora las claves calculadas (`planilla_url`, `planilla_nombre`) para que no se escriban como filas basura en la hoja Configuracion.
+- Nueva acción de backend: `getSheetUrl`.
+- La planilla se abre en una pestaña nueva; solo puede verla quien tenga permiso sobre ese archivo de Google.
+
+### Corregido: el título del presupuesto no se guardaba
+El campo *Título del presupuesto* era el único del editor sin `oninput`, así que lo tipeado se veía en pantalla pero nunca llegaba al presupuesto. Al guardar, la validación lo daba por vacío y frenaba con *"Poné un título"* aunque estuviera escrito. Se agregó el `oninput` y, además, un respaldo que lee el campo directamente antes de validar.

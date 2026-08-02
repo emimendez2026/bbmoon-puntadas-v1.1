@@ -533,6 +533,7 @@ function renderDashboard(){
         quickCard('','📄','Presupuestos','go(\'presupuestos\')')+
         quickCard('','✂️','Trabajos','go(\'trabajos\')')+
         quickCard('','📊','Métricas','go(\'metricas\')')+
+        quickCard('','📗','Ver planilla','abrirPlanilla()')+
       '</div>'+
 
       '<div class="section-title">Resumen de '+esc(mesLab)+'</div>'+
@@ -1373,6 +1374,22 @@ function renderConfig(){
         field('Logo (URL)','logo_url',c.logo_url,'text','Opcional')+
       '</div>'+
       '<button class="btn" onclick="submitConfig()">Guardar configuración</button>'+
+
+      '<div class="section-title">Tu planilla de Google</div>'+
+      '<div class="card">'+
+        '<div class="li-sub" style="line-height:1.6;">'+
+          'Toda la información de la app se guarda en tu planilla de Google. '+
+          'Desde ahí podés verla completa, filtrarla, imprimirla o descargarla a Excel.'+
+        '</div>'+
+        (c.planilla_nombre? '<div class="li-title" style="margin-top:10px;">📗 '+esc(c.planilla_nombre)+'</div>':'')+
+        '<div style="margin-top:12px;">'+
+          '<button class="btn gold" onclick="abrirPlanilla()">📗 Abrir la planilla completa</button>'+
+        '</div>'+
+        '<div style="margin-top:10px;">'+
+          '<button class="btn secondary" onclick="abrirHojasPlanilla()">📑 Ir a una hoja en particular</button>'+
+        '</div>'+
+      '</div>'+
+
       '<div class="divider"></div>'+
       '<button class="btn secondary" onclick="cambiarConexion()">Cambiar planilla conectada</button>'+
       '<div class="footer-note">BBMOON PUNTADAS · versión MVP 1.0</div>'+
@@ -1383,6 +1400,45 @@ function submitConfig(){
   showSaving();
   api('saveConfig',p).then(function(cfg){ STATE.config=cfg; toast('Configuración guardada','ok'); go('dashboard'); }).catch(apiErr);
 }
+// --- Acceso a la planilla de Google ---------------------------------------
+function abrirPlanilla(){
+  var url = (STATE.config||{}).planilla_url;
+  if(url){ window.open(url,'_blank'); return; }
+  // Si la config es de una versión anterior del backend, la pedimos al vuelo.
+  showSaving('Buscando tu planilla…');
+  api('getSheetUrl').then(function(r){
+    closeSheet();
+    if(!r || !r.url){ toast('No se pudo ubicar la planilla','err'); return; }
+    STATE.config = STATE.config||{};
+    STATE.config.planilla_url = r.url;
+    STATE.config.planilla_nombre = r.nombre;
+    window.open(r.url,'_blank');
+  }).catch(apiErr);
+}
+
+function abrirHojasPlanilla(){
+  showSaving('Cargando hojas…');
+  api('getSheetUrl').then(function(r){
+    var hojas = (r && r.hojas) || [];
+    var nombres = {
+      Configuracion:'⚙️ Configuración', Insumos_Stock:'🧵 Insumos / Stock',
+      Clientes:'👥 Clientes', Presupuestos:'📄 Presupuestos',
+      Presupuesto_Items:'📋 Ítems de presupuestos', Trabajos:'✂️ Trabajos',
+      Pagos:'💵 Pagos', Proveedores:'🚚 Proveedores',
+      Localidades:'📍 Localidades', KPIs_Mensuales:'📊 KPIs mensuales'
+    };
+    var filas = hojas.map(function(h){
+      return '<div class="list-item" onclick="window.open(\''+esc(h.url)+'\',\'_blank\')">'+
+        '<div class="li-main"><div class="li-title">'+esc(nombres[h.nombre]||h.nombre)+'</div>'+
+        '<div class="li-sub">'+esc(h.nombre)+'</div></div>'+
+        '<div style="font-size:20px;color:var(--tinta-suave);">↗</div></div>';
+    }).join('');
+    openSheet('Hojas de la planilla',
+      '<div class="li-sub" style="margin-bottom:10px;">Tocá una hoja para abrirla en Google Sheets.</div>'+
+      (filas||'<div class="li-sub">No se encontraron hojas.</div>'));
+  }).catch(apiErr);
+}
+
 function cambiarConexion(){
   if(confirm('¿Desconectar la planilla actual?')){ localStorage.removeItem('av_api_url'); STATE.api=''; renderSetup(); }
 }

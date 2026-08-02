@@ -180,6 +180,7 @@ function route(action, payload) {
     case 'listProveedores':      return readAll('Proveedores');
     case 'saveProveedor':        return saveProveedor(payload);
     case 'getKPIs':              return getKPIs(payload);
+    case 'getSheetUrl':          return getSheetUrl();
     default: throw new Error('Acción desconocida: ' + action);
   }
 }
@@ -353,7 +354,26 @@ function getConfig() {
   Object.keys(CONFIG_DEFAULTS).forEach(function (k) {
     if (cfg[k] === undefined) cfg[k] = CONFIG_DEFAULTS[k];
   });
+  // Dirección de la planilla, para poder abrirla desde la app.
+  // Se calcula en el momento; no se guarda como fila en la hoja.
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    cfg.planilla_url = ss.getUrl();
+    cfg.planilla_nombre = ss.getName();
+  } catch (e) {
+    cfg.planilla_url = '';
+    cfg.planilla_nombre = '';
+  }
   return cfg;
+}
+
+/** Devuelve la dirección de la planilla y de cada una de sus hojas. */
+function getSheetUrl() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var hojas = ss.getSheets().map(function (sh) {
+    return { nombre: sh.getName(), url: ss.getUrl() + '#gid=' + sh.getSheetId() };
+  });
+  return { url: ss.getUrl(), nombre: ss.getName(), hojas: hojas };
 }
 
 function saveConfig(payload) {
@@ -363,7 +383,9 @@ function saveConfig(payload) {
   for (var i = 1; i < values.length; i++) {
     if (values[i][0]) map[values[i][0]] = i + 1;
   }
+  var CALCULADAS = { planilla_url: 1, planilla_nombre: 1 };
   Object.keys(payload).forEach(function (k) {
+    if (CALCULADAS[k]) return;   // no se guardan: se calculan al vuelo
     if (map[k]) {
       sh.getRange(map[k], 2).setValue(payload[k]);
     } else {
