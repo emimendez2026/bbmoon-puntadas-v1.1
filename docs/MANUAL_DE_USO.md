@@ -1,102 +1,47 @@
-# Manual de uso — BBMOON PUNTADAS
+# Manual de uso — BBMOON PUNTADAS v1.3
 
-Guía simple para el día a día. No hace falta saber de computación.
+## Inicio
 
-La app se maneja con la **barra de abajo**: Inicio, Presupuestos, Trabajos, Métricas y (según el celular) el botón de **+** para crear rápido.
+El panel muestra presupuestado, vendido, cobrado, saldo pendiente, egresos, resultado de caja, ganancia estimada, stock bajo y agenda de los proximos siete dias.
 
----
+## Presupuestos
 
-## Primero: cargá tus datos (una sola vez)
+1. Elegir cliente.
+2. Escribir titulo y descripcion.
+3. Agregar materiales del stock o conceptos manuales.
+4. Definir precio de venta y costo interno cuando corresponda.
+5. Definir mano de obra, otros costos, descuentos e IVA.
+6. Cargar horas estimadas y costo interno por hora para obtener rentabilidad.
+7. Guardar o Guardar + PDF.
 
-### Configuración del taller
-Andá a **Configuración** y completá:
-- Nombre del negocio, tu nombre, teléfono y email.
-- CUIT y condición fiscal (si corresponde; aparecen en el PDF).
-- **% de mano de obra por defecto** (viene en 50%).
-- **Validez del presupuesto** en días (viene en 10).
-
-Esto es lo que va a salir en el encabezado y el pie de cada PDF.
-
-### Cargá tus insumos
-En **Insumos** tocá **+ Nuevo** por cada material o servicio (telas, hilos, botones, "arreglo de bastilla", etc.):
-- Poné **categoría**, **nombre**, **unidad** (metro, unidad, servicio…).
-- Cargá el **costo** y el **margen (%)**: el **precio de venta se calcula solo**.
-  - Si preferís, podés escribir el precio de venta a mano.
-- Opcional: **stock actual** y **stock mínimo** para que la app te avise cuando quede poco.
-
-### Cargá tus clientes
-En **Clientes** tocá **+ Nuevo** y poné al menos **nombre** y **teléfono**. La localidad se autocompleta con las de tu zona.
-
-> No es obligatorio cargar todo de entrada: podés ir sumando insumos y clientes a medida que los necesitás.
-
----
-
-## Hacer un presupuesto (lo más importante)
-
-1. Tocá **Nuevo Presupuesto** (o el botón **+**).
-2. **Elegí el cliente** (o creá uno nuevo ahí mismo).
-3. Ponele un **título** y una **descripción** del trabajo (ej.: "3 batas de gabardina con bordado").
-4. **Agregá materiales**: tocá "Agregar insumo", elegilo de la lista y poné la **cantidad**. El subtotal se actualiza en el momento.
-   - Podés agregar todos los que quieras y borrar los que no.
-5. **Mano de obra**: por defecto es el **50% de los materiales**. Podés:
-   - Cambiar el **porcentaje**, o
-   - Poner un **monto fijo**.
-6. Si querés, sumá **otros costos** o un **descuento**.
-7. Tildá **"Aplica IVA"** si el presupuesto lleva IVA (21%).
-8. Mirá el **TOTAL** actualizado abajo.
-9. Tocá **Guardar**. El presupuesto queda registrado.
-
-### Exportar el PDF
-- Desde el presupuesto (o desde el listado), tocá **PDF**. Se descarga un archivo profesional con tu marca, los ítems, el resumen y la leyenda de validez.
-- Ese PDF lo podés **compartir por WhatsApp, email o imprimirlo** como cualquier archivo del celular.
-
----
-
-## Seguir un presupuesto
-
-En **Presupuestos** ves todos, con filtros por estado:
-
-- **Borrador** → recién creado, todavía lo estás armando.
-- **Enviado** → ya se lo pasaste al cliente.
-- **Aprobado** → el cliente dijo que sí.
-- **Rechazado** → no avanzó.
-
-Sobre cada presupuesto podés:
-- **Ver el detalle**.
-- **Cambiar el estado**.
-- **Duplicar** (útil para trabajos parecidos).
-- **Exportar PDF**.
-- **Convertir en trabajo** (cuando se aprueba).
-
----
+La rentabilidad es interna y no aparece en el PDF del cliente. Un presupuesto aprobado puede convertirse una sola vez en trabajo.
 
 ## Trabajos y cobros
 
-Cuando un presupuesto se **aprueba** y lo convertís en **trabajo**, pasa a la sección **Trabajos**. Ahí llevás:
+Al convertir un presupuesto se crea el trabajo, se registra la sena como pago si existe, se registra el ingreso en Caja, se crea la entrega en Agenda y se descuenta stock si esa opcion esta habilitada.
 
-- El **estado** del trabajo (pendiente, en proceso, finalizado…).
-- La **fecha estimada de entrega**.
-- La **seña** y el **saldo** pendiente.
+Los pagos no se editan ni se eliminan. Si hay un error, usar **Anular** y registrar el pago correcto. La anulacion conserva el historial y actualiza nuevamente el saldo. No se puede marcar un trabajo como `cobrado` mientras tenga saldo pendiente.
 
-Para **registrar un pago**: entrá al trabajo → **Registrar pago** → poné el **monto**, el **medio** (efectivo, transferencia…) y el concepto. El saldo se actualiza solo.
+## Caja
 
----
+Los pagos de clientes generan ingresos automaticamente. Tambien se pueden cargar movimientos manuales: compra de telas, avios, servicios, transporte, impuestos y otros ingresos o egresos. Los movimientos manuales pueden anularse. Los vinculados a pagos se anulan desde el pago correspondiente.
 
-## Ver cómo va el negocio (Métricas)
+## Stock
 
-En **Métricas** vas a ver, mes a mes:
-- Cuántos presupuestos hiciste y cuántos se **aprobaron** (tasa de conversión).
-- **Total vendido** y **ticket promedio**.
-- **Trabajos pendientes** y finalizados.
-- **Insumos con stock bajo**.
+Usar **Movimiento** para registrar entradas, salidas o ajustes. Esto conserva el historial de cada insumo. El sistema puede descontar automaticamente los materiales del presupuesto al convertirlo en trabajo.
 
-Sirve para saber qué trabajos convienen más y cómo viene el mes.
+## Medidas
 
----
+Dentro de la ficha de un cliente se pueden guardar multiples fichas de medidas con fecha. La ficha anterior no se reemplaza: queda disponible como historial.
 
-## Consejos
+## Agenda
 
-- **Actualizá los costos** de los insumos cuando cambien los precios: los presupuestos nuevos van a salir con valores al día.
-- Usá **duplicar** para trabajos repetidos y ahorrar tiempo.
-- Si un cliente no aprueba en el plazo de validez, avisale que los precios pueden actualizarse (ya lo aclara el PDF).
-- Revisá **Métricas** una vez por semana para tener el pulso del taller.
+Se pueden registrar pruebas, entregas, compras, llamadas y otros eventos. Las fechas de entrega de los trabajos se sincronizan con un evento de agenda.
+
+## Respaldo
+
+Configuracion -> **Descargar respaldo JSON** crea una copia local de los principales datos visibles. La planilla de Google sigue siendo la fuente principal.
+
+## Seguridad
+
+El PIN se usa solo para iniciar sesion. El dispositivo conserva un token si se marca "Recordar sesion". Para revocar todos los dispositivos, ejecutar `rotarPinAcceso()` en Apps Script y usar el nuevo PIN.
