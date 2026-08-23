@@ -1,0 +1,437 @@
+name: Aplicar interfaz responsive profesional
+
+on:
+  push:
+    paths:
+      - '.github/workflows/bbmoon-desktop-responsive.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Adaptar BBMOON a escritorio sin alterar mobile
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          desktop_css = r'''
+
+/* ==========================================================================
+   ESCRITORIO RESPONSIVE — BBMOON PUNTADAS
+   La experiencia mobile se conserva. Desde 900 px la misma app adopta una
+   interfaz de escritorio con sidebar, mayor densidad y superficies amplias.
+   ========================================================================== */
+.desktop-brand,
+.desktop-nav-label,
+.desktop-only{display:none;}
+
+@media (min-width:900px){
+  :root{
+    --tap:46px;
+    --radio:15px;
+    --radio-sm:12px;
+    --sombra:0 1px 2px rgba(0,31,92,.05), 0 6px 18px rgba(0,31,92,.035);
+    --sombra-alta:0 16px 42px rgba(0,31,92,.14);
+  }
+
+  html{background:#F5F1EB;}
+  body{
+    background:#F5F1EB;
+    min-width:900px;
+    overflow-x:hidden;
+  }
+
+  #app{
+    max-width:none;
+    margin:0 0 0 264px;
+    min-height:100vh;
+    padding-bottom:0;
+  }
+
+  .view{
+    width:100%;
+    max-width:1240px;
+    margin:0 auto;
+    padding:28px 36px 56px;
+  }
+
+  /* Encabezado de contenido */
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:40;
+    min-height:78px;
+    padding:16px 36px;
+    background:rgba(255,255,255,.96);
+    color:var(--tinta);
+    border-bottom:1px solid var(--linea);
+    box-shadow:none;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  .topbar .logo-mark{display:none;}
+  .topbar .title{
+    color:var(--marino);
+    font-size:24px;
+    line-height:1.15;
+  }
+  .topbar .subtitle{
+    margin-top:4px;
+    color:var(--tinta-suave);
+    opacity:1;
+    font-size:11px;
+    letter-spacing:.65px;
+  }
+  .topbar .back{
+    background:var(--arena);
+    color:var(--marino);
+    border:1px solid var(--linea);
+    transition:background .15s, transform .15s, border-color .15s;
+  }
+  .topbar .back:hover{
+    background:var(--salvia-cl);
+    border-color:#DFCBBB;
+    transform:translateY(-1px);
+  }
+
+  /* La barra inferior mobile se convierte en sidebar usando el MISMO DOM. */
+  .tabbar{
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    transform:none;
+    width:264px;
+    max-width:none;
+    height:100vh;
+    z-index:50;
+    background:#FFFDF9;
+    border-top:none;
+    border-right:1px solid var(--linea);
+    box-shadow:8px 0 28px rgba(0,31,92,.045);
+    padding:20px 16px 18px;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:5px;
+  }
+  .desktop-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:4px 7px 20px;
+    margin-bottom:8px;
+    border-bottom:1px solid var(--linea);
+  }
+  .desktop-brand-mark{
+    width:48px;
+    height:48px;
+    flex:0 0 48px;
+    border-radius:14px;
+    background:#fff url('icon-192.png') center/42px 42px no-repeat;
+    box-shadow:0 3px 12px rgba(0,31,92,.10);
+  }
+  .desktop-brand-copy{min-width:0;}
+  .desktop-brand-title{
+    font-family:'Lora',Georgia,serif;
+    font-size:15px;
+    line-height:1.15;
+    font-weight:700;
+    color:var(--marino);
+    white-space:nowrap;
+  }
+  .desktop-brand-sub{
+    margin-top:3px;
+    font-size:10px;
+    line-height:1.2;
+    text-transform:uppercase;
+    letter-spacing:.9px;
+    color:var(--tinta-suave);
+    font-weight:700;
+  }
+  .desktop-nav-label{
+    display:block;
+    padding:10px 13px 5px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.1px;
+    color:#8994A7;
+    font-weight:800;
+  }
+  .desktop-only{display:flex !important;}
+  .tabbar button{
+    flex:0 0 auto;
+    width:100%;
+    min-height:48px;
+    padding:0 14px;
+    border-radius:12px;
+    flex-direction:row;
+    align-items:center;
+    justify-content:flex-start;
+    gap:12px;
+    color:var(--tinta-suave);
+    font-size:14px;
+    font-weight:700;
+    transition:background .15s, color .15s, transform .15s;
+  }
+  .tabbar button .ic{
+    width:24px;
+    flex:0 0 24px;
+    text-align:center;
+    font-size:19px;
+  }
+  .tabbar button:hover{
+    color:var(--marino);
+    background:var(--arena);
+  }
+  .tabbar button.active{
+    color:var(--salvia-osc);
+    background:var(--salvia-cl);
+  }
+  .tabbar button.active .ic{transform:none;}
+  .desktop-nav-spacer{display:block; flex:1; min-height:14px;}
+
+  /* Dashboard */
+  .quick-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+    margin-top:2px;
+  }
+  .quick{
+    min-height:122px;
+    padding:18px;
+    border-radius:16px;
+    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .quick:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 28px rgba(0,31,92,.09);
+    border-color:#DFD1C2;
+  }
+  .quick.primary:hover{border-color:var(--salvia);}
+  .quick .q-ic{width:44px;height:44px;border-radius:12px;font-size:21px;}
+  .quick .q-lab{font-size:14px;}
+
+  .kpi-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+  }
+  .kpi{
+    padding:18px 20px;
+    min-height:100px;
+    border-radius:15px;
+  }
+  .kpi .k-val{font-size:27px;}
+  .kpi .k-lab{font-size:12px;margin-top:7px;}
+
+  /* Tarjetas, listas y formularios */
+  .card{
+    padding:20px 22px;
+    margin-bottom:18px;
+    border-radius:16px;
+  }
+  .card.tight{padding:16px 18px;}
+  .section-title{
+    margin:26px 3px 11px;
+    font-size:12px;
+    letter-spacing:1.15px;
+  }
+  .list-item{
+    padding:16px 18px;
+    margin-bottom:9px;
+    border-radius:13px;
+    transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  }
+  .list-item:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 24px rgba(0,31,92,.075);
+    border-color:#DCCDBE;
+  }
+  .list-item .li-title{font-size:15.5px;}
+  .list-item .li-sub{font-size:13px;}
+  .list-item .li-amount{font-size:16px;}
+  .avatar{width:46px;height:46px;border-radius:12px;}
+
+  .search{max-width:640px;margin-bottom:16px;}
+  .search input{
+    min-height:46px;
+    border-radius:12px;
+    background:#fff;
+  }
+  .field{margin-bottom:16px;}
+  .field label{font-size:12.5px;}
+  .input,.select,.textarea{border-radius:11px;}
+  .row2{gap:16px;}
+
+  .btn{
+    min-height:46px;
+    border-radius:12px;
+    font-size:15px;
+    transition:transform .12s ease, filter .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 7px 18px rgba(0,31,92,.10);
+  }
+  .btn.sm{min-height:38px;font-size:13px;}
+  .view > .btn{
+    width:auto;
+    min-width:210px;
+  }
+  .btn-row{max-width:760px;gap:12px;}
+
+  /* Selectores mobile-style pasan a modales de escritorio. */
+  .sheet-overlay{
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    background:rgba(0,31,92,.28);
+  }
+  .sheet{
+    width:min(640px,calc(100vw - 80px));
+    max-width:640px;
+    margin:0;
+    border-radius:20px;
+    max-height:84vh;
+    box-shadow:var(--sombra-alta);
+    animation:desktopModal .2s ease-out;
+  }
+  @keyframes desktopModal{
+    from{opacity:0;transform:translateY(8px) scale(.985);}
+    to{opacity:1;transform:none;}
+  }
+  .sheet-grip{display:none;}
+  .sheet-head{padding:19px 22px;}
+  .sheet-head h3{font-size:20px;}
+  .sheet-body{padding:20px 22px 24px;}
+
+  .toast{
+    left:calc(50% + 132px);
+    bottom:28px;
+    max-width:520px;
+  }
+  .setup{
+    max-width:600px;
+    margin:48px auto;
+    border-radius:20px;
+  }
+  .footer-note{margin-top:28px;}
+}
+
+@media (min-width:1280px){
+  .view{padding-left:42px;padding-right:42px;}
+  .quick-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+'''
+
+          old_tabbar = r'''function renderTabbar(){
+  var tabs = [
+    {id:'dashboard', ic:'🏠', lab:'Inicio'},
+    {id:'presupuestos', ic:'📄', lab:'Presup.'},
+    {id:'clientes', ic:'👥', lab:'Clientes'},
+    {id:'insumos', ic:'🧵', lab:'Insumos'},
+    {id:'metricas', ic:'📊', lab:'Métricas'}
+  ];
+  document.getElementById('tabbar-slot').innerHTML =
+    '<div class="tabbar">'+ tabs.map(function(t){
+      return '<button data-tab="'+t.id+'" onclick="go(\''+t.id+'\')">'+
+             '<span class="ic">'+t.ic+'</span><span>'+t.lab+'</span></button>';
+    }).join('') +'</div>';
+}
+function updateTabbar(view){
+  var groupMap = { presupuesto:'presupuestos', config:'dashboard', trabajos:'metricas' };
+  var active = groupMap[view] || view;
+  document.querySelectorAll('.tabbar button').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab')===active);
+  });
+}'''
+
+          new_tabbar = r'''function renderTabbar(){
+  var tabs = [
+    {id:'dashboard', ic:'🏠', lab:'Inicio'},
+    {id:'presupuestos', ic:'📄', lab:'Presup.'},
+    {id:'clientes', ic:'👥', lab:'Clientes'},
+    {id:'insumos', ic:'🧵', lab:'Insumos'},
+    {id:'metricas', ic:'📊', lab:'Métricas'}
+  ];
+  document.getElementById('tabbar-slot').innerHTML =
+    '<div class="tabbar">'+
+      '<div class="desktop-brand">'+
+        '<div class="desktop-brand-mark"></div>'+
+        '<div class="desktop-brand-copy"><div class="desktop-brand-title">BBMOON PUNTADAS</div><div class="desktop-brand-sub">Gestión del taller</div></div>'+
+      '</div>'+
+      '<div class="desktop-nav-label">Principal</div>'+
+      tabs.map(function(t){
+        return '<button data-tab="'+t.id+'" onclick="go(\''+t.id+'\')">'+
+               '<span class="ic">'+t.ic+'</span><span>'+t.lab+'</span></button>';
+      }).join('')+
+      '<div class="desktop-nav-label desktop-only">Gestión</div>'+
+      '<button class="desktop-only" data-tab="trabajos" onclick="go(\'trabajos\')"><span class="ic">✂️</span><span>Trabajos</span></button>'+
+      '<div class="desktop-nav-spacer desktop-only"></div>'+
+      '<button class="desktop-only" data-tab="config" onclick="go(\'config\')"><span class="ic">⚙️</span><span>Configuración</span></button>'+
+    '</div>';
+}
+function updateTabbar(view){
+  var isDesktop = !!(window.matchMedia && window.matchMedia('(min-width:900px)').matches);
+  var groupMap = { presupuesto:'presupuestos' };
+  if(!isDesktop){
+    groupMap.config='dashboard';
+    groupMap.trabajos='metricas';
+  }
+  var active = groupMap[view] || view;
+  document.querySelectorAll('.tabbar button').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab')===active);
+  });
+}
+window.addEventListener('resize', function(){
+  if(STATE.currentView) updateTabbar(STATE.currentView);
+});'''
+
+          for filename in ('index.html', 'frontend/index.html'):
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+
+              if 'ESCRITORIO RESPONSIVE — BBMOON PUNTADAS' not in text:
+                  if '</style>\n</head>' not in text:
+                      raise SystemExit(f'No se encontro el cierre de estilos en {filename}')
+                  text = text.replace('</style>\n</head>', desktop_css + '\n</style>\n</head>', 1)
+
+              if old_tabbar not in text:
+                  raise SystemExit(f'No se encontro el bloque de navegacion esperado en {filename}')
+              text = text.replace(old_tabbar, new_tabbar, 1)
+              path.write_text(text, encoding='utf-8')
+
+          # Los dos entrypoints deben conservar exactamente la misma interfaz.
+          if Path('index.html').read_bytes() != Path('frontend/index.html').read_bytes():
+              raise SystemExit('index.html y frontend/index.html quedaron diferentes')
+
+          Path('.github/workflows/bbmoon-desktop-responsive.yml').unlink()
+          PY
+
+      - name: Verificar interfaz responsive
+        shell: bash
+        run: |
+          grep -q "ESCRITORIO RESPONSIVE — BBMOON PUNTADAS" index.html
+          grep -q "@media (min-width:900px)" index.html
+          grep -q "desktop-brand-title" index.html
+          grep -q "data-tab=\"trabajos\"" index.html
+          grep -q "data-tab=\"config\"" index.html
+          cmp index.html frontend/index.html
+
+      - name: Guardar cambio
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Mejorar interfaz responsive para escritorio"
+          git push
