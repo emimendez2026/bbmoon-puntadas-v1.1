@@ -1262,7 +1262,18 @@ function verTrabajo(id){
         estados.map(function(e){return '<button class="btn sm '+(est===e?'':'secondary')+'" style="flex:0 0 auto;text-transform:capitalize;" onclick="cambiarEstadoTrabajo(\''+esc(id)+'\',\''+e+'\')">'+e+'</button>';}).join('')+
       '</div></div>'+
       '<button class="btn gold" onclick="abrirPago(\''+esc(id)+'\',\''+esc(t.id_cliente)+'\')">💰 Registrar pago</button>'+
+    '<button class="btn secondary" style="margin-top:10px;color:#B23A48;" onclick="eliminarTrabajo(\''+esc(id)+'\')">🗑 Eliminar trabajo</button>'+
     '</div>';
+}
+function eliminarTrabajo(id){
+  var t=STATE.trabajos.find(function(x){return String(x.id_trabajo)===String(id);});
+  var nombre=(t&&t.titulo_trabajo)?t.titulo_trabajo:'este trabajo';
+  if(!confirm('¿Eliminar '+nombre+'?\n\nSe borrará también cualquier pago asociado y no se puede deshacer.')) return;
+  showSaving('Eliminando…');
+  api('deleteTrabajo',{id_trabajo:id})
+    .then(function(){ return reloadData(); })
+    .then(function(){ toast('Trabajo eliminado','ok'); go('trabajos'); })
+    .catch(apiErr);
 }
 function cambiarEstadoTrabajo(id, estado){
   var t=STATE.trabajos.find(function(x){return String(x.id_trabajo)===String(id);});
